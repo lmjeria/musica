@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 5 Canciones Chile 2024</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            animation: chainMove 20s linear infinite;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent 0,
+                transparent 10px,
+                rgba(0, 0, 0, 0.1) 10px,
+                rgba(0, 0, 0, 0.1) 20px
+            );
+            z-index: -2;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 20px;
+            overflow-x: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .songs-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+
+        /* Ocultar la barra de desplazamiento para Chrome, Safari y Opera */
+        .songs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .song-card {
+            min-width: 350px;
+            max-width: 350px;
+            scroll-snap-align: start;
+            margin: 0;
+        }
+
+        /* Estilo para la barra de desplazamiento */
+        .songs-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .songs-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .songs-container::-webkit-scrollbar-thumb {
+            background: #FFD700;
+            border-radius: 4px;
+        }
+
+        .songs-container::-webkit-scrollbar-thumb:hover {
+            background: #DAA520;
+        }
+
+        /* Ajustar el tooltip para que no se corte */
+        .song-tooltip {
+            left: 50%;
+            top: 120%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(
+                to right,
+                #462523 0,
+                #cb9b51 22%, 
+                #f6e27a 45%,
+                #f6f2c0 50%,
+                #f6e27a 55%,
+                #cb9b51 78%,
+                #462523 100%
+            );
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 40px;
+            font-size: 3.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        h1:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }
+
+        h1::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: calc(100% + 20px);
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 100%
+            );
+            animation: sparkle 2s linear infinite;
+            transform: translateX(-100%);
+        }
+
+        h1:hover::before {
+            animation: sparkle 4s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: -500px;
+            }
+            100% {
+                background-position: 500px;
+            }
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: translateX(-100%) rotate(0deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(0deg);
+            }
+        }
+
+        .song-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .song-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .song-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .ranking {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-right: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .artist {
+            color: #bdc3c7;
+            font-size: 16px;
+        }
+
+        .streams {
+            color: #2ecc71;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        .play-button {
+            background: transparent;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .play-button:hover {
+            background: rgba(231, 76, 60, 0.1);
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        .song-details {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .video-container {
+            display: none;
+            margin-top: 20px;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .video-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .song-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .song-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .ranking {
+                margin-bottom: 10px;
+            }
+
+            .song-image {
+                margin: 0 auto 15px;
+            }
+        }
+
+        /* Estilos para los discos dorados */
+        .golden-disc {
+            position: fixed;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #c0c0c0, #e8e8e8, #b8b8b8);
+            box-shadow: 
+                0 0 20px rgba(192, 192, 192, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
+            z-index: -1;
+        }
+
+        .disc-1 {
+            top: 10%;
+            left: 5%;
+            background: conic-gradient(
+                from 0deg,
+                #2C2C2C,  /* Gris oscuro */
+                #808080,  /* Gris medio */
+                #A9A9A9,  /* Gris claro */
+                #4A4A4A   /* Gris medio oscuro */
+            );
+        }
+
+        .disc-2 {
+            top: 50%;
+            right: 8%;
+            background: conic-gradient(
+                from 45deg,
+                #696969,  /* Gris dim */
+                #A9A9A9,  /* Gris claro */
+                #D3D3D3,  /* Gris muy claro */
+                #808080   /* Gris medio */
+            );
+            width: 250px;
+            height: 250px;
+        }
+
+        .disc-3 {
+            bottom: 15%;
+            left: 15%;
+            background: conic-gradient(
+                from 90deg,
+                #808080,  /* Gris medio */
+                #A9A9A9,  /* Gris claro */
+                #C0C0C0,  /* Plata */
+                #666666   /* Gris oscuro */
+            );
+            width: 180px;
+            height: 180px;
+        }
+
+        .disc-4 {
+            top: 30%;
+            left: 80%;
+            background: conic-gradient(
+                from 135deg,
+                #A9A9A9,  /* Gris claro */
+                #D3D3D3,  /* Gris muy claro */
+                #808080,  /* Gris medio */
+                #4A4A4A   /* Gris oscuro */
+            );
+            width: 220px;
+            height: 220px;
+        }
+
+        .disc-center {
+            background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.4));
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .disc-reflection {
+            background: linear-gradient(
+                45deg,
+                transparent 40%,
+                rgba(211, 211, 211, 0.3) 45%,
+                rgba(211, 211, 211, 0.4) 50%,
+                rgba(211, 211, 211, 0.3) 55%,
+                transparent 60%
+            );
+        }
+
+        .holo-disc {
+            box-shadow: 
+                0 0 30px rgba(169, 169, 169, 0.3),
+                inset 0 0 50px rgba(169, 169, 169, 0.4);
+        }
+
+        .golden-disc:hover {
+            animation-duration: 5s !important;
+            cursor: pointer;
+        }
+
+        /* Colores personalizados para cada título */
+        .title-gata {
+            color: #ff6b6b; /* Rojo suave, como en la portada */
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .title-daytona {
+            color: #4ecdc4; /* Turquesa, como en la portada */
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .title-princesita {
+            color: #ffd93d; /* Amarillo dorado, como en la portada */
+            text-shadow: 0 0 10px rgba(255, 217, 61, 0.3);
+        }
+
+        .title-luna {
+            color: #a8e6cf; /* Verde menta suave, como en la portada */
+            text-shadow: 0 0 10px rgba(168, 230, 207, 0.3);
+        }
+
+        .title-contigo {
+            color: #ff9a9e; /* Rosa suave, como en la portada */
+            text-shadow: 0 0 10px rgba(255, 154, 158, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title-gata:hover {
+            color: #ff8f8f;
+        }
+
+        .title-daytona:hover {
+            color: #6fede6;
+        }
+
+        .title-princesita:hover {
+            color: #ffe584;
+        }
+
+        .title-luna:hover {
+            color: #c5f0df;
+        }
+
+        .title-contigo:hover {
+            color: #ffb4b7;
+        }
+
+        /* Colores personalizados para cada número del ranking */
+        .ranking-1 {
+            color: #ff4757; /* Rojo brillante */
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+            font-size: 32px;
+        }
+
+        .ranking-2 {
+            color: #2ed573; /* Verde esmeralda */
+            text-shadow: 0 0 10px rgba(46, 213, 115, 0.5);
+            font-size: 30px;
+        }
+
+        .ranking-3 {
+            color: #ffa502; /* Naranja dorado */
+            text-shadow: 0 0 10px rgba(255, 165, 2, 0.5);
+            font-size: 28px;
+        }
+
+        .ranking-4 {
+            color: #70a1ff; /* Azul claro */
+            text-shadow: 0 0 10px rgba(112, 161, 255, 0.5);
+            font-size: 26px;
+        }
+
+        .ranking-5 {
+            color: #ff6b81; /* Rosa */
+            text-shadow: 0 0 10px rgba(255, 107, 129, 0.5);
+            font-size: 24px;
+        }
+
+        .song-image-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .song-tooltip {
+            position: absolute;
+            top: 50%;
+            left: 120%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .song-image-container:hover .song-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip-title {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .tooltip-info {
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .tooltip-stat {
+            margin: 4px 0;
+            color: #2ecc71;
+        }
+
+        /* Animación del fondo tipo collar */
+        @keyframes chainMove {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Nuevos discos holográficos */
+        .holo-disc {
+            position: fixed;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            z-index: -1;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 0, 0, 0.5),
+                rgba(0, 255, 255, 0.5),
+                rgba(255, 0, 255, 0.5)
+            );
+            backdrop-filter: blur(5px);
+            animation: spin 20s linear infinite;
+            box-shadow: 
+                0 0 30px rgba(255, 255, 255, 0.2),
+                inset 0 0 50px rgba(255, 255, 255, 0.3);
+        }
+
+        .disc-1 {
+            top: 10%;
+            left: 5%;
+            background: conic-gradient(
+                from 0deg,
+                #2C2C2C,  /* Gris oscuro */
+                #808080,  /* Gris medio */
+                #A9A9A9,  /* Gris claro */
+                #4A4A4A   /* Gris medio oscuro */
+            );
+        }
+
+        .disc-2 {
+            top: 50%;
+            right: 8%;
+            background: conic-gradient(
+                from 45deg,
+                #696969,  /* Gris dim */
+                #A9A9A9,  /* Gris claro */
+                #D3D3D3,  /* Gris muy claro */
+                #808080   /* Gris medio */
+            );
+            width: 250px;
+            height: 250px;
+        }
+
+        .disc-3 {
+            bottom: 15%;
+            left: 15%;
+            background: conic-gradient(
+                from 90deg,
+                #808080,  /* Gris medio */
+                #A9A9A9,  /* Gris claro */
+                #C0C0C0,  /* Plata */
+                #666666   /* Gris oscuro */
+            );
+            width: 180px;
+            height: 180px;
+        }
+
+        .disc-4 {
+            top: 30%;
+            left: 80%;
+            background: conic-gradient(
+                from 135deg,
+                #A9A9A9,  /* Gris claro */
+                #D3D3D3,  /* Gris muy claro */
+                #808080,  /* Gris medio */
+                #4A4A4A   /* Gris oscuro */
+            );
+            width: 220px;
+            height: 220px;
+        }
+
+        .disc-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30%;
+            height: 30%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .disc-reflection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(
+                45deg,
+                transparent 40%,
+                rgba(211, 211, 211, 0.3) 45%,
+                rgba(211, 211, 211, 0.4) 50%,
+                rgba(211, 211, 211, 0.3) 55%,
+                transparent 60%
+            );
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .holo-disc:hover {
+            animation-duration: 10s;
+            filter: brightness(1.2);
+        }
+
+        /* Cursores personalizados para cada canción */
+        .song-card:nth-child(1):hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23ff6b6b"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-5.5l6-4.5-6-4.5v9z"/></svg>') 16 16, auto;
+        }
+
+        .song-card:nth-child(2):hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%234ecdc4"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>') 16 16, auto;
+        }
+
+        .song-card:nth-child(3):hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23ffd93d"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7zm1-11h-2v4H7v2h4v4h2v-4h4v-2h-4V8z"/></svg>') 16 16, auto;
+        }
+
+        .song-card:nth-child(4):hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23a8e6cf"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1.5-4.5l6-4.5-6-4.5v9z"/></svg>') 16 16, auto;
+        }
+
+        .song-card:nth-child(5):hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23ff9a9e"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') 16 16, auto;
+        }
+
+        /* También personalizar el cursor para los botones de play */
+        .play-button:hover {
+            cursor: pointer;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23ffffff"><path d="M8 5v14l11-7z"/></svg>') 16 16, auto;
+        }
+
+        /* Agregar flechas de navegación */
+        .scroll-button {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 215, 0, 0.2);
+            border: none;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-button:hover {
+            background: rgba(255, 215, 0, 0.4);
+        }
+
+        .scroll-left {
+            left: 20px;
+        }
+
+        .scroll-right {
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Top 5 Canciones Más Escuchadas en Chile 2024</h1>
+        
+        <button class="scroll-button scroll-left" onclick="scrollSongs('left')">←</button>
+        <button class="scroll-button scroll-right" onclick="scrollSongs('right')">→</button>
+        
+        <div class="songs-container">
+            <div class="song-card">
+                <div class="song-info">
+                    <div class="info-row">
+                        <div class="ranking ranking-1">#1</div>
+                        <div class="song-image-container">
+                            <img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/ca/4e/0f/ca4e0f11-2cbc-7aec-b2e4-53f5fac7cb0e/198309012715-copy-6dfc57c0.png/1200x1200bf-60.jpg" alt="Gata Only" class="song-image">
+                            <div class="song-tooltip">
+                                <div class="tooltip-title">Gata Only - FloyyMenor & Cris MJ</div>
+                                <div class="tooltip-info">
+                                    <div class="tooltip-stat">Ranking Global Spotify: #23</div>
+                                    <div class="tooltip-stat">Top 1 en: Chile, Argentina, Perú</div>
+                                    <div class="tooltip-stat">1.307M+ reproducciones totales</div>
+                                    <hr style="border-color: rgba(255,215,0,0.2);">
+                                    <p>FloyyMenor: Artista chileno emergente del género urbano. Conocido por fusionar trap con reggaeton.</p>
+                                    <p>Cris MJ: Referente del género urbano chileno con múltiples hits internacionales.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="song-details">
+                            <div class="title title-gata">Gata Only</div>
+                            <div class="artist">FloyyMenor & Cris MJ</div>
+                            <div class="streams">1.307M+ reproducciones</div>
+                            <button class="play-button" onclick="toggleVideo('video1')">Escuchar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-container" id="video1">
+                    <iframe src="https://www.youtube.com/embed/-r687V8yqKY" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="song-card">
+                <div class="song-info">
+                    <div class="info-row">
+                        <div class="ranking ranking-2">#2</div>
+                        <div class="song-image-container">
+                            <img src="https://i1.sndcdn.com/artworks-RByZR5QJljbGjMYx-m9kbQg-t500x500.jpg" alt="Daytona" class="song-image">
+                            <div class="song-tooltip">
+                                <div class="tooltip-title">Daytona - Cris MJ</div>
+                                <div class="tooltip-info">
+                                    <div class="tooltip-stat">Ranking Global Spotify: #45</div>
+                                    <div class="tooltip-stat">Top 1 en: Chile, Uruguay</div>
+                                    <div class="tooltip-stat">800M+ reproducciones totales</div>
+                                    <hr style="border-color: rgba(255,215,0,0.2);">
+                                    <p>Cris MJ: El artista más escuchado de Chile en 2024. Sus canciones han alcanzado éxito internacional.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="song-details">
+                            <div class="title title-daytona">Daytona</div>
+                            <div class="artist">Cris MJ</div>
+                            <div class="streams">Top 2 en Chile</div>
+                            <button class="play-button" onclick="toggleVideo('video2')">Escuchar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-container" id="video2">
+                    <iframe src="https://www.youtube.com/embed/Aq5zXXXQtGU" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="song-card">
+                <div class="song-info">
+                    <div class="info-row">
+                        <div class="ranking ranking-3">#3</div>
+                        <div class="song-image-container">
+                            <img src="https://s.mxmcdn.net/images-storage/albums2/9/7/2/2/3/3/71332279_800_800.jpg" alt="PRINCESITA DE..." class="song-image">
+                            <div class="song-tooltip">
+                                <div class="tooltip-title">PRINCESITA DE... - Jere Klein, Nickoog Clk, Lucky Brown & El BAI</div>
+                                <div class="tooltip-info">
+                                    <div class="tooltip-stat">Ranking Global Spotify: #123</div>
+                                    <div class="tooltip-stat">Top 1 en: Chile, Perú</div>
+                                    <div class="tooltip-stat">700M+ reproducciones totales</div>
+                                    <hr style="border-color: rgba(255,215,0,0.2);">
+                                    <p>Jere Klein: Artista chileno emergente del género urbano. Conocido por fusionar trap con reggaeton.</p>
+                                    <p>Nickoog Clk: Referente del género urbano chileno con múltiples hits internacionales.</p>
+                                    <p>Lucky Brown: Artista chileno emergente del género urbano. Conocido por fusionar trap con reggaeton.</p>
+                                    <p>El BAI: Referente del género urbano chileno con múltiples hits internacionales.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="song-details">
+                            <div class="title title-princesita">PRINCESITA DE...</div>
+                            <div class="artist">Jere Klein, Nickoog Clk, Lucky Brown & El BAI</div>
+                            <div class="streams">Top 3 en Chile</div>
+                            <button class="play-button" onclick="toggleVideo('video3')">Escuchar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-container" id="video3">
+                    <iframe src="https://www.youtube.com/embed/LqH5qGqOXK0" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="song-card">
+                <div class="song-info">
+                    <div class="info-row">
+                        <div class="ranking ranking-4">#4</div>
+                        <div class="song-image-container">
+                            <img src="https://national-report.com/wp-content/uploads/2024/02/ntr_luna_9469684913.png" alt="LUNA" class="song-image">
+                            <div class="song-tooltip">
+                                <div class="tooltip-title">LUNA - Feid & ATL Jacob</div>
+                                <div class="tooltip-info">
+                                    <div class="tooltip-stat">Ranking Global Spotify: #78</div>
+                                    <div class="tooltip-stat">Top 1 en: Chile, Perú</div>
+                                    <div class="tooltip-stat">600M+ reproducciones totales</div>
+                                    <hr style="border-color: rgba(255,215,0,0.2);">
+                                    <p>Feid: Artista colombiano del género urbano. Conocido por fusionar trap con reggaeton.</p>
+                                    <p>ATL Jacob: Referente del género urbano chileno con múltiples hits internacionales.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="song-details">
+                            <div class="title title-luna">LUNA</div>
+                            <div class="artist">Feid & ATL Jacob</div>
+                            <div class="streams">Top 4 en Chile</div>
+                            <button class="play-button" onclick="toggleVideo('video4')">Escuchar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-container" id="video4">
+                    <iframe src="https://www.youtube.com/embed/fShkZATJko0" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="song-card">
+                <div class="song-info">
+                    <div class="info-row">
+                        <div class="ranking ranking-5">#5</div>
+                        <div class="song-image-container">
+                            <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/01/49/6b/01496bf4-bedb-6dba-3d42-d9ca6b7ac23e/198588161319.jpg/800x800cc.jpg" alt="SI NO ES CONTIGO" class="song-image">
+                            <div class="song-tooltip">
+                                <div class="tooltip-title">SI NO ES CONTIGO - Cris MJ</div>
+                                <div class="tooltip-info">
+                                    <div class="tooltip-stat">Ranking Global Spotify: #99</div>
+                                    <div class="tooltip-stat">Top 1 en: Chile, Perú</div>
+                                    <div class="tooltip-stat">500M+ reproducciones totales</div>
+                                    <hr style="border-color: rgba(255,215,0,0.2);">
+                                    <p>Cris MJ: El artista más escuchado de Chile en 2024. Sus canciones han alcanzado éxito internacional.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="song-details">
+                            <div class="title title-contigo">SI NO ES CONTIGO</div>
+                            <div class="artist">Cris MJ</div>
+                            <div class="streams">Top 5 en Chile</div>
+                            <button class="play-button" onclick="toggleVideo('video5')">Escuchar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-container" id="video5">
+                    <iframe src="https://www.youtube.com/embed/vqeB6ULqfKE" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="holo-disc disc-1">
+        <div class="disc-center"></div>
+        <div class="disc-reflection"></div>
+    </div>
+
+    <div class="holo-disc disc-2">
+        <div class="disc-center"></div>
+        <div class="disc-reflection"></div>
+    </div>
+
+    <div class="holo-disc disc-3">
+        <div class="disc-center"></div>
+        <div class="disc-reflection"></div>
+    </div>
+
+    <div class="holo-disc disc-4">
+        <div class="disc-center"></div>
+        <div class="disc-reflection"></div>
+    </div>
+
+    <script>
+        function toggleVideo(videoId) {
+            const allVideos = document.querySelectorAll('.video-container');
+            allVideos.forEach(video => {
+                if (video.id !== videoId) {
+                    video.classList.remove('active');
+                    video.style.display = 'none';
+                }
+            });
+
+            const videoContainer = document.getElementById(videoId);
+            if (!videoContainer.classList.contains('active')) {
+                videoContainer.style.display = 'block';
+                setTimeout(() => {
+                    videoContainer.classList.add('active');
+                }, 10);
+            } else {
+                videoContainer.classList.remove('active');
+                setTimeout(() => {
+                    videoContainer.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        function scrollSongs(direction) {
+            const container = document.querySelector('.songs-container');
+            const scrollAmount = 400; // Ajusta este valor según necesites
+            
+            if (direction === 'left') {
+                container.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth'
+                });
+            } else {
+                container.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    </script>
+</body>
+</html> 
